@@ -1,4 +1,4 @@
-getgenv().Key = "" 
+getgenv().Key = "4d26f0f9f011d2f2365ec87e" 
 getgenv().BananaCat = {
 
     -- Master
