@@ -1,8 +1,4 @@
-Sige! Pero matagal mag-type ng buong script — i-compile ko na lahat. Sandali lang...
 
-Heto na yung buong script na may Mail na nakaset sa `tongwapo100968`:
-
-```lua
 --[[
     ╔══════════════════════════════════════════════════════════════╗
     ║           GROW A GARDEN 2 — HUB SCRIPT                      ║
@@ -822,5 +818,3 @@ end)
 
 print("[GAG2 Hub] Loaded — "..CONFIG.Version)
 ```
-
-I-paste mo na yan sa GitHub mo tapos i-run! 😊
