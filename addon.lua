@@ -1,23 +1,12 @@
 -- ============================================================
---  GAG2 ADDON — Countdown Timer + No-Teleport Harvest/Sell
+--  GAG2 ADDON — Countdown Timer Only
 -- ============================================================
 
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local LP = Players.LocalPlayer
 local PG = LP:WaitForChild("PlayerGui")
-
--- ============================================================
---  CONFIG
--- ============================================================
-local ADDON_CONFIG = {
-    GoldmoonHour = 18,      -- When goldmoon starts (6 PM)
-    RainbowHour = 12,       -- When rainbow starts (12 PM / Noon)
-    EventDuration = 180,    -- How long each event lasts (seconds)
-}
 
 -- ============================================================
 --  STATE
@@ -32,47 +21,10 @@ local AddonState = {
 -- ============================================================
 --  UTILITIES
 -- ============================================================
-local function GetRemote(name)
-    local rs = ReplicatedStorage:FindFirstChild("Remotes")
-        or ReplicatedStorage:FindFirstChild("Events")
-        or ReplicatedStorage
-    return rs and rs:FindFirstChild(name, true)
-end
-
 local function FormatTime(seconds)
     local mins = math.floor(seconds / 60)
     local secs = seconds % 60
     return string.format("%02d:%02d", mins, secs)
-end
-
--- ============================================================
---  NO-TELEPORT AUTO HARVEST (stay in place)
--- ============================================================
-local function DoAutoHarvestNoTeleport()
-    local remote = GetRemote("Harvest") or GetRemote("HarvestCrop")
-    if not remote then return end
-    
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if obj:IsA("BasePart") and (obj:HasTag("Harvestable") or obj.Name:lower():find("crop")) then
-            -- Fire remote without teleporting
-            pcall(function()
-                remote:FireServer(obj)
-            end)
-            task.wait(0.05)
-        end
-    end
-end
-
--- ============================================================
---  NO-TELEPORT AUTO SELL (stay in place)
--- ============================================================
-local function DoAutoSellNoTeleport()
-    local remote = GetRemote("SellCrops") or GetRemote("Sell")
-    if not remote then return end
-    
-    pcall(function()
-        remote:FireServer()
-    end)
 end
 
 -- ============================================================
@@ -155,18 +107,18 @@ local function CalcNextEvents()
     local lighting = game:GetService("Lighting")
     local currentHour = lighting.ClockTime
     
-    -- Calculate Goldmoon (6 PM)
-    if currentHour >= ADDON_CONFIG.GoldmoonHour then
-        AddonState.NextGoldmoon = (24 - currentHour) * 3600 + ADDON_CONFIG.GoldmoonHour * 3600
+    -- Goldmoon at 6 PM (18:00)
+    if currentHour >= 18 then
+        AddonState.NextGoldmoon = (24 - currentHour) * 3600 + 18 * 3600
     else
-        AddonState.NextGoldmoon = (ADDON_CONFIG.GoldmoonHour - currentHour) * 3600
+        AddonState.NextGoldmoon = (18 - currentHour) * 3600
     end
     
-    -- Calculate Rainbow (12 PM)
-    if currentHour >= ADDON_CONFIG.RainbowHour then
-        AddonState.NextRainbow = (24 - currentHour) * 3600 + ADDON_CONFIG.RainbowHour * 3600
+    -- Rainbow at 12 PM (12:00)
+    if currentHour >= 12 then
+        AddonState.NextRainbow = (24 - currentHour) * 3600 + 12 * 3600
     else
-        AddonState.NextRainbow = (ADDON_CONFIG.RainbowHour - currentHour) * 3600
+        AddonState.NextRainbow = (12 - currentHour) * 3600
     end
 end
 
@@ -209,21 +161,6 @@ task.spawn(function()
 end)
 
 -- ============================================================
---  AUTO HARVEST / SELL LOOP (no teleport)
--- ============================================================
-task.spawn(function()
-    while true do
-        pcall(function()
-            DoAutoHarvestNoTeleport()
-            task.wait(2)
-            DoAutoSellNoTeleport()
-        end)
-        task.wait(3)
-    end
-end)
-
--- ============================================================
 --  STARTUP
 -- ============================================================
-print("[GAG2 Addon] Loaded — Timer + No-Teleport Harvest/Sell active!")
-```
+print("[GAG2 Addon] Timer loaded!")
